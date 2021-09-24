@@ -1,0 +1,72 @@
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
+@{
+    ViewData["Title"] = "Index";
+}
+@model IEnumerable<ProjectManagementApplicationMVC.Models.DomainModels.Project>
+@if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin) || User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager)) {
+<div class="container p-3">
+    <div class="col">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="text text-black-50>List of projects</a>
+                <li />
+                <li class="nav-item">
+                    <a class="btn btn-primary" asp-action="Create" asp-controller="Project">Create new project</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <br />
+
+            @if (Model.Count() > 0)
+            {
+
+
+                   <table class="table table-bordered table-striped" style=" width: 100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                Code
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager)) {
+                            <th>
+                                Progress
+                            </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr>
+                            <td width="30%">@item.Id</td>
+                            <td width="30%">@item.Name</td>
+                            @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager))
+                            {
+                                <td width="30%">@item.Progress %</td>
+                            }
+                            @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin))
+                            { 
+                                <td width="40%">
+                                    <div class="col-6 text-right role="group">
+
+                                        <a asp-controller="Project" asp-action="Edit" asp-route-Id="@item.Id" class=" btn btn-primary"> Edit</a>
+                                        <a asp-controller="Project" asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger"> Delete</a>
+
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    }

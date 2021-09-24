@@ -1,0 +1,103 @@
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
+
+@if (signInManager.IsSignedIn(User))
+{    
+    <form method="post" id="logoutForm" asp-action="LogOff" asp-controller="Account">
+        <div class="col-md-10 offset-md-2 custom-checkbox  ">
+            <div class="container">
+                
+                <ul class="navbar-nav  flex-row">
+
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin))
+                    {
+                        <h4 class="pr-5">Admin page</h4>
+                        <li class="nav-item ">
+                            <a asp-action="Register" asp-controller="Account"> Register new user   </a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager))
+                    {
+                        <h4 class="pr-5">Project Manager page</h4>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin))
+                    {
+
+                        <li class="nav-item ">
+                            <a asp-action="index" asp-controller="Project"> All Projects   </a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager))
+                    {
+
+                        <li class="nav-item ">
+                            <a asp-action="index" asp-controller="Project"> All Projects   </a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin))
+                    {
+
+                        <li class="nav-item">
+                            <a class="py-0 pt-xl-5" asp-action="Index" asp-controller="Task">Tasks list</a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Admin))
+                    {
+
+                        <li class="nav-item">
+                            <a class="py-0 pt-xl-5" asp-action="Index" asp-controller="Users">All users</a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Developer))
+                    {
+                        <h4 class="pr-5">Developer page</h4>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.Developer))
+                    {
+
+                        <li class="nav-item">
+                            <a class="py-0 pt-xl-5" asp-action="Index" asp-controller="Task">Tasks list</a>
+                        </li>
+
+                    }
+                    @if (User.IsInRole(ProjectManagementApplicationMVC.Helper.Helper.ProjectManager))
+                    {
+
+                        <li class="nav-item">
+                            <a class="py-0 pt-xl-5" asp-action="Index" asp-controller="Task">Tasks list</a>
+                        </li>
+
+                    }
+
+                    <h6 class="pl-lg-5">Hello, @User.Identity.Name !</h6>
+                    <li class="nav-item">
+                        <a href="javascript:document.getElementById('logoutForm').submit()">Log off </a>
+                    </li>
+
+                </ul>
+                </div>
+            </div>
+        
+    </form>
+        
+}
+else
+{
+<div class="col">
+    <div class="container">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link " id="loginLink" asp-controller="Account" asp-action="Login">Sign in</a>
+            <li />
+          
+            
+        </ul>
+    </div>
+</div>
+ }
