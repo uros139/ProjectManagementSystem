@@ -16,7 +16,7 @@ namespace ProjectManagementApplicationMVC.Controllers
         SignInManager<ApplicationUser> _signInManager;
         RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(ApplicationDBContext db, UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,
+        public AccountController(ApplicationDBContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager)
         {
             _db = db;
@@ -29,11 +29,13 @@ namespace ProjectManagementApplicationMVC.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Register() {
-            if (!_roleManager.RoleExistsAsync(Helper.Helper.Admin).GetAwaiter().GetResult()) {
-               await _roleManager.CreateAsync(new IdentityRole(Helper.Helper.Admin));
+        public async Task<IActionResult> Register()
+        {
+            if (!_roleManager.RoleExistsAsync(Helper.Helper.Admin).GetAwaiter().GetResult())
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Helper.Helper.Admin));
                 await _roleManager.CreateAsync(new IdentityRole(Helper.Helper.Developer));
-                 await _roleManager.CreateAsync(new IdentityRole(Helper.Helper.ProjectManager));
+                await _roleManager.CreateAsync(new IdentityRole(Helper.Helper.ProjectManager));
             }
             return View();
         }
@@ -42,9 +44,11 @@ namespace ProjectManagementApplicationMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid) {
-                var result = await _signInManager.PasswordSignInAsync(model.Email,model.Password,model.RememberMe,false);
-                if (result.Succeeded) {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Invalid login attempt");
@@ -53,40 +57,42 @@ namespace ProjectManagementApplicationMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model) {
-            if (ModelState.IsValid) {
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
                     Name = model.Name,
-                    Surname = model.Surname  
+                    Surname = model.Surname
                 };
-                var result = await _userManager.CreateAsync(user,model.Password);
-                
-                if (result.Succeeded) 
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, model.RoleName);
-                   // await _signInManager.SignInAsync(user, isPersistent: false);
+                    // await _signInManager.SignInAsync(user, isPersistent: false);
                     //return RedirectToAction("Index", "Home");
-                    
+
                 }
-                foreach (var Error in result.Errors) 
+                foreach (var Error in result.Errors)
                 {
                     ModelState.AddModelError("", Error.Description);
-                
+
                 }
             }
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> LogOff() 
+        public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
-     
-        
+
+
 
 
 
