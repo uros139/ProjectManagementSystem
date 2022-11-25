@@ -10,7 +10,7 @@ namespace ProjectManagementApplicationMVC.Models
 {
     public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) :base(options) { }
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
         public DbSet<Taskk> Tasks { get; set; }
         public DbSet<Project> Projects { get; set; }
     }
