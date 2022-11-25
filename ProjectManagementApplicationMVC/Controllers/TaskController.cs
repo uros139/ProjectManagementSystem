@@ -16,7 +16,7 @@ namespace ProjectManagementApplicationMVC.Controllers
         private readonly ITaskService _taskService;
         ApplicationDBContext _db;
 
-        public TaskController(ITaskService taskService,ApplicationDBContext db)
+        public TaskController(ITaskService taskService, ApplicationDBContext db)
         {
             _db = db;
             _taskService = taskService;
@@ -24,13 +24,14 @@ namespace ProjectManagementApplicationMVC.Controllers
 
         //INDEX
         public IActionResult Index()
-        {   
-            ViewBag.DeveloperList=_taskService.getDeveloperList();
+        {
+            ViewBag.DeveloperList = _taskService.getDeveloperList();
             ViewBag.ManagersList = _taskService.getManagerList();
 
             List<TaskVM> tasksVM = new List<TaskVM>();
             IEnumerable<Taskk> objList = _db.Tasks;
-            foreach (Taskk t in objList) {
+            foreach (Taskk t in objList)
+            {
                 TaskVM taskvm = new TaskVM();
                 taskvm.Name = t.Name;
                 taskvm.Description = t.Description;
@@ -39,7 +40,7 @@ namespace ProjectManagementApplicationMVC.Controllers
                 taskvm.Progress = t.Progress;
                 taskvm.ProjectId = t.ProjectId;
                 taskvm.IsDeveloperAssigned = t.IsDeveloperAssigned;
-                taskvm.due = t.due.ToString().Substring(0,t.due.ToString().Length-10);
+                taskvm.due = t.due.ToString().Substring(0, t.due.ToString().Length - 10);
 
                 var projectname = (from p in _db.Projects
                                    where p.Id == t.ProjectId
@@ -47,14 +48,14 @@ namespace ProjectManagementApplicationMVC.Controllers
                                    ).ToList();
                 taskvm.ProjectName = projectname.First();
                 var managername = (from m in _db.Users
-                                      where m.Id == t.ManagerId
-                                      select m.Name
+                                   where m.Id == t.ManagerId
+                                   select m.Name
                     ).ToList();
                 var developername = (from d in _db.Users
-                                   where d.Id == t.DeveloperId
-                                   select d.Email
+                                     where d.Id == t.DeveloperId
+                                     select d.Email
                     ).ToList();
-                if (managername.Count!=0)
+                if (managername.Count != 0)
                 {
                     taskvm.ManagerName = managername.First();
                 }
@@ -73,8 +74,8 @@ namespace ProjectManagementApplicationMVC.Controllers
                     taskvm.DeveloperName = developername.First();
                 }
                 tasksVM.Add(taskvm);
-             }
-            
+            }
+
             return View(tasksVM);
         }
         //CREATE GET
@@ -92,7 +93,7 @@ namespace ProjectManagementApplicationMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TaskVM obj)
         {
-            
+
 
             Taskk task = new Taskk();
             task.Description = obj.Description;
@@ -101,7 +102,7 @@ namespace ProjectManagementApplicationMVC.Controllers
             task.due = DateTime.ParseExact(due, "dd.MM.yyyy", null);
             task.ManagerId = Request.Form["managersId"];
             string statusTask = Request.Form["status"];
-           
+
             //validation for developers, not more than 3 tasks
             string developerId = Request.Form["developersId"];
             int developerTaks = (from t in _db.Tasks
@@ -122,20 +123,20 @@ namespace ProjectManagementApplicationMVC.Controllers
                     return Ok("Can not assign more than 3 tasks to one developer!");
                 }
             }
-                task.Status = status.New;
-                task.Progress = 0;
-            
+            task.Status = status.New;
+            task.Progress = 0;
+
             //add project to task
             string projectId = Request.Form["projectsId"];
             int projectID = int.Parse(projectId);
             var projects = (from proj in _db.Projects
-                               where proj.Id ==projectID
-                               select proj
+                            where proj.Id == projectID
+                            select proj
                                ).ToList();
             Project pro = projects.First();
             task.ProjectId = pro.Id;
 
-        
+
 
             _db.Add(task);
             _db.SaveChanges();
@@ -166,16 +167,16 @@ namespace ProjectManagementApplicationMVC.Controllers
             }
 
             TaskVM taskvm = new TaskVM();
-                taskvm.Name = t.Name;
-                taskvm.Description = t.Description;
-                taskvm.Id = t.Id;
-                taskvm.Status = t.Status;
-                taskvm.Progress = t.Progress;
-                taskvm.ProjectId = t.ProjectId;
-                var managername = (from m in _db.Users
-                                   where m.Id == t.ManagerId
-                                   select m.Name
-                    ).ToList();
+            taskvm.Name = t.Name;
+            taskvm.Description = t.Description;
+            taskvm.Id = t.Id;
+            taskvm.Status = t.Status;
+            taskvm.Progress = t.Progress;
+            taskvm.ProjectId = t.ProjectId;
+            var managername = (from m in _db.Users
+                               where m.Id == t.ManagerId
+                               select m.Name
+                ).ToList();
 
             if (managername.Count != 0)
             {
@@ -193,13 +194,13 @@ namespace ProjectManagementApplicationMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(TaskVM obj)
-        {   
-          
+        {
+
             Taskk t = _db.Tasks.Find(obj.Id);
-          
+
             var managerId = Request.Form["managersId"];
             string developerId = Request.Form["developersId"];
-            
+
             //Developer evaluation
             int developerTaks = (from tasks in _db.Tasks
                                  where developerId == tasks.DeveloperId
@@ -221,7 +222,8 @@ namespace ProjectManagementApplicationMVC.Controllers
             }
 
             //if Admin unasssigns developer 
-            if (obj.IsDeveloperAssigned ==false && obj.Name != null && obj.due!=null) {
+            if (obj.IsDeveloperAssigned == false && obj.Name != null && obj.due != null)
+            {
                 t.DeveloperId = null;
                 t.IsDeveloperAssigned = false;
                 t.due = DateTime.ParseExact(obj.due, "dd.MM.yyyy", null);
@@ -236,31 +238,35 @@ namespace ProjectManagementApplicationMVC.Controllers
                 {
                     t.due = DateTime.ParseExact(obj.due, "dd.MM.yyyy", null);
                 }
-                catch {
-                  new   Exception("Invalid date format");
-                     return Ok("Invalid date format, go back and enter valid date format: DD.MM.YYYY");
+                catch
+                {
+                    new Exception("Invalid date format");
+                    return Ok("Invalid date format, go back and enter valid date format: DD.MM.YYYY");
                 }
 
             }
-       
-            
 
-            
+
+
+
             //In case developer is assigned, name and manager will return null,
             //so they stay unchanged.
-            if (obj.Name != null) { 
-            t.Name = obj.Name;
-            t.ManagerId = managerId;
-            t.due = DateTime.ParseExact(obj.due, "dd.MM.yyyy", null);
+            if (obj.Name != null)
+            {
+                t.Name = obj.Name;
+                t.ManagerId = managerId;
+                t.due = DateTime.ParseExact(obj.due, "dd.MM.yyyy", null);
 
 
             }
             t.Description = obj.Description;
             t.Progress = obj.Progress;
-            if (t.Progress == 100) {
+            if (t.Progress == 100)
+            {
                 t.Status = status.Finished;
             }
-            if (t.Progress < 100 && t.Progress > 0) {
+            if (t.Progress < 100 && t.Progress > 0)
+            {
                 t.Status = status.InProgress;
 
             }
@@ -280,7 +286,7 @@ namespace ProjectManagementApplicationMVC.Controllers
             {
                 return NotFound();
             }
-           
+
             return View(obj);
         }
         [HttpPost]
@@ -297,7 +303,8 @@ namespace ProjectManagementApplicationMVC.Controllers
             updateProjectProgress(obj);
             return RedirectToAction("Index");
         }
-        public void updateProjectProgress(Taskk t) {
+        public void updateProjectProgress(Taskk t)
+        {
             int taskscount = (from tasks in _db.Tasks
                               where tasks.ProjectId == t.ProjectId
                               select tasks.Id
