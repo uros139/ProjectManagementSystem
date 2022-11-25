@@ -33,7 +33,7 @@ namespace ProjectManagementApplicationMVC.Controllers
                               where ur.UserId == au.Id
                               select ur.RoleId
                             ).FirstOrDefault();
-                if (roleid != null) 
+                if (roleid != null)
                 {
                     var rolename = (from r in _db.Roles
                                     where r.Id == roleid
@@ -41,7 +41,7 @@ namespace ProjectManagementApplicationMVC.Controllers
                               ).First().ToString();
                     uservm.Role = rolename;
                 }
-           
+
                 users.Add(uservm);
 
             }
@@ -49,7 +49,8 @@ namespace ProjectManagementApplicationMVC.Controllers
         }
         public IActionResult Delete(string? id)
         {
-            if (id == null) {
+            if (id == null)
+            {
                 return NotFound();
             }
             var obj = _db.Users.Find(id);
@@ -63,12 +64,12 @@ namespace ProjectManagementApplicationMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(string? id) 
+        public IActionResult DeletePost(string? id)
         {
             var user = _db.Users.Find(id);
             _db.Users.Remove(user);
             _db.SaveChanges();
-           return  RedirectToAction("Index");
+            return RedirectToAction("Index");
         }
     }
 }
