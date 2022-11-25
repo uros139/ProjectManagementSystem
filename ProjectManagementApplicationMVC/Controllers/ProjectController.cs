@@ -14,7 +14,8 @@ namespace ProjectManagementApplicationMVC.Controllers
     {
         private readonly ITaskService _itaskService;
         private readonly ApplicationDBContext _db;
-        public ProjectController(ApplicationDBContext db, ITaskService taskService) {
+        public ProjectController(ApplicationDBContext db, ITaskService taskService)
+        {
             _db = db;
             _itaskService = taskService;
 
@@ -27,7 +28,8 @@ namespace ProjectManagementApplicationMVC.Controllers
 
             return View(objList);
         }
-        public IActionResult Create() {
+        public IActionResult Create()
+        {
 
             ViewBag.Managers = _itaskService.getManagerList();
 
@@ -36,7 +38,8 @@ namespace ProjectManagementApplicationMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Project obj) {
+        public async Task<IActionResult> Create(Project obj)
+        {
 
             var managerId = Request.Form["managersId"];
             obj.ProjectManagerId = managerId;
@@ -45,8 +48,9 @@ namespace ProjectManagementApplicationMVC.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
-       
-        public IActionResult Edit(int? id) {
+
+        public IActionResult Edit(int? id)
+        {
             if (id == 0 || id == null)
             {
                 return NotFound();
@@ -63,24 +67,27 @@ namespace ProjectManagementApplicationMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Project obj) {
+        public IActionResult Edit(Project obj)
+        {
             var managerId = Request.Form["managersId"];
 
-           
+
 
             obj.ProjectManagerId = managerId;
             _db.Update(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
-      
+
         public IActionResult Delete(int? id)
         {
-            if (id == 0 || id == null) {
+            if (id == 0 || id == null)
+            {
                 return NotFound();
             }
             var obj = _db.Projects.Find(id);
-            if (obj == null) {
+            if (obj == null)
+            {
                 return NotFound();
             }
 
@@ -88,13 +95,15 @@ namespace ProjectManagementApplicationMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int? id) {
+        public IActionResult DeletePost(int? id)
+        {
             var obj = _db.Projects.Find(id);
-            if (obj == null) {
+            if (obj == null)
+            {
                 return NotFound();
             }
             _db.Projects.Remove(obj);
-            _db.SaveChanges(); 
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
