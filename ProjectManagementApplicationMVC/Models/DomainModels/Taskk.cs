@@ -19,12 +19,12 @@ namespace ProjectManagementApplicationMVC.Models.DomainModels
         public DateTime due { get; set; }
         [StringLength(20, MinimumLength = 5, ErrorMessage = "Must be at least 5 characters long.")]
         public string Description { get; set; }
-       
+
         public int Progress { get; set; }
         public string DeveloperId { get; set; }
         public string ManagerId { get; set; }
         public bool IsDeveloperAssigned { get; set; }
         public string AdminId { get; set; }
-        public int ProjectId{ get; set; }
+        public int ProjectId { get; set; }
     }
 }
